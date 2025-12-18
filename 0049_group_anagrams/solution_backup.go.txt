@@ -1,0 +1,71 @@
+package groupanagrams
+
+import "slices"
+
+// 题目：49. 字母异位词分组
+// 链接：https://leetcode.cn/problems/group-anagrams/
+// 难度：Medium
+
+// 思路：哈希表
+// 1. 把每个字符串排序，作为map的key
+// 2. 相同key的字符串放到同一个数组里
+
+// 时间复杂度：O(n * k * log k)，n是字符串个数，k是最长字符串长度
+// 空间复杂度：O(n * k)
+
+// func 函数名(参数名 参数类型) 返回值类型
+// strs []string = 字符串数组（切片）
+// [][]string = 二维字符串数组（返回值）
+func groupAnagrams(strs []string) [][]string {
+
+	// make() = 创建并初始化
+	// map[string][]string = key是string, value是string数组
+	// := 是声明+赋值，自动推断类型
+	m := make(map[string][]string)
+
+	// for _, str := range strs = 遍历数组
+	// _ = 忽略下标（不需要知道是第几个）
+	// str = 当前元素的值
+	// range = 遍历，自动从头到尾
+	for _, str := range strs {
+
+		// []byte(str) = 字符串转字节数组
+		// "eat" → [101, 97, 116]（ASCII码）
+		// 为什么转？Go的string不能修改，要排序必须转成[]byte
+		bytes := []byte(str)
+
+		// slices.Sort(切片) - Go 1.21+ 简洁排序
+		// 默认升序，一行搞定
+		//
+		// 如果需要自定义排序（比如降序），用：
+		//   sort.Slice(arr, func(i, j int) bool {
+		//       return arr[i] > arr[j]  // 降序
+		//   })
+		slices.Sort(bytes)
+
+		// string(bytes) = 字节数组转回字符串
+		// [97, 101, 116] → "aet"
+		key := string(bytes)
+
+		// m[key] = 取出key对应的数组
+		// append(数组, 元素) = 往数组末尾追加元素
+		// Go的append必须赋值回去！因为可能返回新数组
+		m[key] = append(m[key], str)
+	}
+
+	// make([][]string, 0, len(m))
+	// 第1个参数：类型（二维string数组）
+	// 第2个参数：初始长度（0，空的）
+	// 第3个参数：容量（预留空间，优化性能）
+	res := make([][]string, 0)
+
+	// for _, v := range m = 遍历map
+	// _ = 忽略key
+	// v = 每个value（就是那些字符串数组）
+	for _, v := range m {
+		res = append(res, v)
+	}
+
+	// 返回结果，和C一样
+	return res
+}
